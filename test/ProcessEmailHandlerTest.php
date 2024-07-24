@@ -22,6 +22,8 @@ class ProcessEmailHandlerTest extends TestCase
     #[TestWith(['MSAU240724000'])]
     #[TestWith(['MSAU240724000'])]
     #[TestWith(['AU2407240001'])]
+    #[TestWith(['Ref ID: AU2407240001'])]
+    #[TestWith(['Reference ID: AU2407240001'])]
     public function testCanDetectInvalidSubjectLines(string $subjectLine)
     {
         $handler = new ProcessEmailHandler();
@@ -48,5 +50,28 @@ class ProcessEmailHandlerTest extends TestCase
         $this->assertInstanceOf(MessageInterface::class, $output);
         $this->assertSame(Http::BAD_REQUEST->value, $output->getStatusCode());
         $this->assertSame(json_encode($expectedOutput), $output->getBody()->getContents());
+    }
+
+    #[TestWith(['Ref ID: MSAU2407240001'])]
+    #[TestWith(['Reference ID: MSAU2407240001'])]
+    public function testCanProcessEmailsWithValidSubjectLines(string $subjectLine)
+    {
+        $handler = new ProcessEmailHandler();
+
+        $request = $this->createMock(ServerRequestInterface::class);
+        $request
+            ->expects($this->once())
+            ->method('getParsedBody')
+            ->willReturn([
+                'subject' => $subjectLine
+            ]);
+
+        $response = new Response();
+
+        $output = $handler($request, $response, []);
+        $output->getBody()->rewind();
+
+        $this->assertInstanceOf(MessageInterface::class, $output);
+        $this->assertSame(Http::OK->value, $output->getStatusCode());
     }
 }
