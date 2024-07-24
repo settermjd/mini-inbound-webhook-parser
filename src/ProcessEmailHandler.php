@@ -38,7 +38,8 @@ class ProcessEmailHandler
     ) {
         $parsedBody = $request->getParsedBody();
         $subject = $parsedBody['subject'] ?? '';
-        $status = Http::OK;
+
+        $response->withHeader('Content-Type', 'application/json');
 
         if (! $this->isValidSubjectLine($subject)) {
             $responseData = [
@@ -47,10 +48,18 @@ class ProcessEmailHandler
                 "detail" => "Email subject lines must match one of the following two, case-insensitive, formats: 'Reference ID: REF_ID' or 'Ref ID: REF_ID'. REF_ID is a 14 character string. It can contain lower and uppercase letters from A to Z (inclusive), and any digit between 0 and 9 (inclusive).",
             ];
             $response->getBody()->write(json_encode($responseData));
-            $status = Http::BAD_REQUEST;
+            
+            return $response->withStatus(Http::BAD_REQUEST->value);
         }
 
-        $response->withHeader('Content-Type', 'application/json');
-        return $response->withStatus($status->value);
+        $responseData = [
+            "status" => "success",
+            "data" => [
+                'reference id' => $this->getReferenceId($subject),
+            ],
+        ];
+        $response->getBody()->write(json_encode($responseData));
+
+        return $response;
     }
 }

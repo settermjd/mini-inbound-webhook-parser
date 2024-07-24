@@ -71,7 +71,15 @@ class ProcessEmailHandlerTest extends TestCase
         $output = $handler($request, $response, []);
         $output->getBody()->rewind();
 
+        $expectedOutput = [
+            'status' => 'success',
+            'data' => [
+                'reference id' => $handler->getReferenceId($subjectLine),
+            ]
+        ];
+
         $this->assertInstanceOf(MessageInterface::class, $output);
         $this->assertSame(Http::OK->value, $output->getStatusCode());
+        $this->assertSame(json_encode($expectedOutput), $output->getBody()->getContents());
     }
 }
