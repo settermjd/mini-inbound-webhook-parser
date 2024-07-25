@@ -12,13 +12,13 @@ require __DIR__ . '/../vendor/autoload.php';
 $container = new Container();
 AppFactory::setContainer($container);
 
-$container->set(\App\ProcessEmailHandler::class, function () {
-    return new \App\ProcessEmailHandler();
+$container->set(\App\ProcessRequestHandler::class, function () {
+    return new \App\ProcessRequestHandler();
 });
 
 
 $app = AppFactory::create();
 
-$app->get('/', new \App\ProcessEmailHandler());
+$app->get('/', new \App\ProcessRequestHandler());
 
 $app->run();

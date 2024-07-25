@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\ProcessRequestHandler;
 use eXorus\PhpMimeMailParser\Attachment;
 use JustSteveKing\StatusCode\Http;
 use PHPUnit\Framework\Attributes\TestWith;
@@ -13,7 +14,7 @@ use Psr\Http\Message\StreamInterface;
 use Slim\Psr7\Response;
 use Slim\Psr7\Stream;
 
-class ProcessEmailHandlerTest extends TestCase
+class ProcessRequestHandlerTest extends TestCase
 {
     /**
      * @return void
@@ -27,7 +28,7 @@ class ProcessEmailHandlerTest extends TestCase
     #[TestWith(['Reference ID: AU2407240001'])]
     public function testCanDetectInvalidSubjectLines(string $subjectLine)
     {
-        $handler = new ProcessEmailHandler();
+        $handler = new ProcessRequestHandler();
 
         $request = $this->createMock(ServerRequestInterface::class);
         $request
@@ -57,7 +58,7 @@ class ProcessEmailHandlerTest extends TestCase
     #[TestWith(['Reference ID: MSAU2407240001'])]
     public function testCanProcessEmailsWithValidSubjectLines(string $subjectLine)
     {
-        $handler = new ProcessEmailHandler();
+        $handler = new ProcessRequestHandler();
 
         $request = $this->createMock(ServerRequestInterface::class);
         $request
@@ -84,13 +85,13 @@ class ProcessEmailHandlerTest extends TestCase
         $this->assertSame(json_encode($expectedOutput), $output->getBody()->getContents());
     }
 
-    public function testCanParseEmailFromEmailString(): void
+    public function testCanProcessEmail(): void
     {
         $emailContents = file_get_contents(sprintf(
             "%s/data/email/sendgrid-example.eml",
             __DIR__
         ));
-        $handler = new ProcessEmailHandler();
+        $handler = new ProcessRequestHandler();
         $emailData = $handler->parseEmail($emailContents);
 
         $htmlBody = <<<EOF

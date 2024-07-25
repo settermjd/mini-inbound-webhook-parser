@@ -10,7 +10,7 @@ use Laminas\Diactoros\Response\JsonResponse;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
-class ProcessEmailHandler
+class ProcessRequestHandler
 {
     public const IS_VALID_SUBJECT = 1;
 
@@ -72,7 +72,7 @@ class ProcessEmailHandler
         return [
             'sender' => $parser->getHeader('to'),
             // Get all attachments, excluding inline attachments
-            'attachments' => $parser->getAttachments(),
+            'attachments' => $parser->getAttachments(false),
             'message' => [
                 'html' => $parser->getMessageBody('html'),
                 'text' => $parser->getMessageBody('text')
