@@ -6,15 +6,14 @@ namespace App;
 
 use eXorus\PhpMimeMailParser\Parser;
 use JustSteveKing\StatusCode\Http;
-use Laminas\Diactoros\Response\JsonResponse;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
 class ProcessRequestHandler
 {
-    public const IS_VALID_SUBJECT = 1;
+    public const int IS_VALID_SUBJECT = 1;
 
-    public const VALID_SUBJECT_REGEX = "/(?i:Ref(erence)? ID: )(?<refid>[0-9a-zA-Z]{14})/";
+    public const string VALID_SUBJECT_REGEX = "/(?i:Ref(erence)? ID: )(?<refid>[0-9a-zA-Z]{14})/";
 
     public function isValidSubjectLine(string $subjectLine): bool
     {

@@ -1,24 +1,23 @@
 <?php
+declare(strict_types=1);
 
-namespace App;
+namespace AppTest;
 
 use App\ProcessRequestHandler;
 use eXorus\PhpMimeMailParser\Attachment;
 use JustSteveKing\StatusCode\Http;
 use PHPUnit\Framework\Attributes\TestWith;
+use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\MessageInterface;
-use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Message\StreamInterface;
 use Slim\Psr7\Response;
-use Slim\Psr7\Stream;
 
 class ProcessRequestHandlerTest extends TestCase
 {
     /**
      * @return void
-     * @throws \PHPUnit\Framework\MockObject\Exception
+     * @throws Exception
      */
     #[TestWith([''])]
     #[TestWith(['MSAU240724000'])]
