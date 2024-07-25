@@ -5,12 +5,18 @@
     "license": "BSD-3-Clause",
     "require": {
         "php": "~8.3.0",
+        "ext-mbstring": "*",
+        "ext-mailparse": "*",
         "juststeveking/http-status-code": "^3.0",
         "laminas/laminas-db": "^2.20",
         "php-di/php-di": "^7.0",
         "php-mime-mail-parser/php-mime-mail-parser": "^1.0",
         "slim/psr7": "^1.7",
         "slim/slim": "^4.14"
+    },
+    "require-dev": {
+        "mikehaertl/php-shellcommand": "^1.7",
+        "phpunit/phpunit": "^11.2"
     },
     "config": {
         "sort-packages": true
@@ -24,10 +30,6 @@
         "psr-4": {
             "AppTest\\": "test/"
         }
-    },
-    "require-dev": {
-        "mikehaertl/php-shellcommand": "^1.7",
-        "phpunit/phpunit": "^11.2"
     },
     "scripts": {
         "serve": [

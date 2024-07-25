@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "27a39fbc9f5074df8121cec920a3eeb1",
+    "content-hash": "7e919b075cc25fdd9dd4a573c9ec2afd",
     "packages": [
         {
             "name": "fig/http-message-util",
@@ -485,27 +485,30 @@
         },
         {
             "name": "php-mime-mail-parser/php-mime-mail-parser",
-            "version": "v1.0.0",
+            "version": "1.7.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/php-mime-mail-parser/php-mime-mail-parser.git",
-                "reference": "bd5b876742301b0e54c06527f807378789cfc5bb"
+                "reference": "c6d091937f178be9f38d2ce187faab86b19a4f61"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-mime-mail-parser/php-mime-mail-parser/zipball/bd5b876742301b0e54c06527f807378789cfc5bb",
-                "reference": "bd5b876742301b0e54c06527f807378789cfc5bb",
+                "url": "https://api.github.com/repos/php-mime-mail-parser/php-mime-mail-parser/zipball/c6d091937f178be9f38d2ce187faab86b19a4f61",
+                "reference": "c6d091937f178be9f38d2ce187faab86b19a4f61",
                 "shasum": ""
             },
             "require": {
+                "ext-mailparse": "*",
                 "php": ">=5.3.0"
             },
             "require-dev": {
-                "phpunit/phpunit": ">=3.7.0"
+                "phpunit/phpunit": "4.*",
+                "satooshi/php-coveralls": "0.*",
+                "squizlabs/php_codesniffer": "2.*"
             },
             "type": "library",
             "autoload": {
-                "psr-0": {
+                "psr-4": {
                     "eXorus\\PhpMimeMailParser\\": "src/"
                 }
             },
@@ -515,26 +518,49 @@
             ],
             "authors": [
                 {
-                    "name": "google",
-                    "homepage": "https://code.google.com/p/php-mime-mail-parser"
+                    "name": "bucabay",
+                    "email": "gabe@fijiwebdesign.com",
+                    "homepage": "http://www.fijiwebdesign.com",
+                    "role": "Developer"
                 },
                 {
                     "name": "eXorus",
-                    "homepage": "https://github.com/eXorus/"
+                    "email": "exorus.spam@gmail.com",
+                    "homepage": "https://github.com/eXorus/",
+                    "role": "Developer"
+                },
+                {
+                    "name": "M.Valinskis",
+                    "email": "M.Valins@gmail.com",
+                    "homepage": "https://code.google.com/p/php-mime-mail-parser",
+                    "role": "Developer"
+                },
+                {
+                    "name": "eugene.emmett.wood",
+                    "email": "gene_w@cementhorizon.com",
+                    "homepage": "https://code.google.com/p/php-mime-mail-parser",
+                    "role": "Developer"
+                },
+                {
+                    "name": "alknetso",
+                    "email": "alkne@gmail.com",
+                    "homepage": "https://code.google.com/p/php-mime-mail-parser",
+                    "role": "Developer"
                 }
             ],
-            "description": "This project strives to create a fast and efficient PHP Mime Mail Parser Class using PHP's MailParse Extension",
+            "description": "Fully Tested Mailparse Extension Wrapper for PHP 5.3+",
             "homepage": "https://github.com/eXorus/php-mime-mail-parser",
             "keywords": [
+                "MimeMailParser",
                 "mail",
                 "mailparse",
                 "mime"
             ],
             "support": {
                 "issues": "https://github.com/php-mime-mail-parser/php-mime-mail-parser/issues",
-                "source": "https://github.com/php-mime-mail-parser/php-mime-mail-parser/tree/v1.0.0"
+                "source": "https://github.com/php-mime-mail-parser/php-mime-mail-parser/tree/1.7.4"
             },
-            "time": "2014-03-17T09:00:58+00:00"
+            "time": "2015-03-01T21:30:05+00:00"
         },
         {
             "name": "psr/container",
@@ -2869,7 +2895,9 @@
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
-        "php": "~8.3.0"
+        "php": "~8.3.0",
+        "ext-mbstring": "*",
+        "ext-mailparse": "*"
     },
     "platform-dev": [],
     "plugin-api-version": "2.6.0"
