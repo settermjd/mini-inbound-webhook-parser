@@ -48,7 +48,7 @@ class DatabaseHandlerTest extends TestCase
     public function testCanCreateNewAttachment()
     {
         $attachment = file_get_contents(
-            __DIR__ . "/data/attachments/generic-document.pdf"
+            __DIR__ . "/data/attachment/generic-document.pdf"
         );
         $this->assertSame(1, $this->handler->insertAttachment(1, $attachment));
     }
