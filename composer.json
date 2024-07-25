@@ -7,6 +7,7 @@
         "php": "~8.3.0",
         "ext-mbstring": "*",
         "ext-mailparse": "*",
+        "ext-pdo": "*",
         "juststeveking/http-status-code": "^3.0",
         "laminas/laminas-db": "^2.20",
         "php-di/php-di": "^7.0",

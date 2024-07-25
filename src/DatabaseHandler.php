@@ -4,7 +4,10 @@ declare(strict_types=1);
 namespace App;
 
 use Laminas\Db\Adapter\AdapterInterface;
+use Laminas\Db\Adapter\Driver\Pdo\Result;
+use Laminas\Db\Adapter\Driver\ResultInterface;
 use Laminas\Db\Sql\Sql;
+use PDO;
 
 readonly class DatabaseHandler
 {
@@ -40,5 +43,26 @@ readonly class DatabaseHandler
         return (int) $this->adapter
             ->getDriver()
             ->getLastGeneratedValue();
+    }
+
+    public function findUserIDByEmailAddress(string $emailAddress): ?int
+    {
+        $sql = new Sql($this->adapter);
+        $select = $sql->select();
+        $select
+            ->from('user')
+            ->columns(['id'])
+            ->where(['email' => $emailAddress]);
+
+        $statement = $sql->prepareStatementForSqlObject($select);
+        /** @var ResultInterface|Result $result */
+        $result = $statement->execute();
+
+        if ($result instanceof ResultInterface && $result->isQueryResult()) {
+            $record = $result->current();
+            return $record['id'];
+        }
+
+        return null;
     }
 }

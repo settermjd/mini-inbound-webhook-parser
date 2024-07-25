@@ -44,6 +44,16 @@ class DatabaseHandlerTest extends TestCase
         );
     }
 
+    public function testCanFindUserIDFromEmailAddress()
+    {
+        $this->assertSame(1, $this->handler->findUserIDByEmailAddress('b.joel@example.org'));
+    }
+
+    public function testCannotFindUserIDFromEmailAddressWhenNoEmailAddressIsExists()
+    {
+        $this->assertNull($this->handler->findUserIDByEmailAddress('unknown.user@example.org'));
+    }
+
     #[Depends('testCanCreateNewNote')]
     public function testCanCreateNewAttachment()
     {
