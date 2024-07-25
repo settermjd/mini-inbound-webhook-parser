@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App;
 
+use eXorus\PhpMimeMailParser\Parser;
 use JustSteveKing\StatusCode\Http;
 use Laminas\Diactoros\Response\JsonResponse;
 use Psr\Http\Message\ResponseInterface;
@@ -61,5 +62,21 @@ class ProcessEmailHandler
         $response->getBody()->write(json_encode($responseData));
 
         return $response;
+    }
+
+    public function parseEmail(string $email): array
+    {
+        $parser = new Parser();
+        $parser->setText($email);
+
+        return [
+            'sender' => $parser->getHeader('to'),
+            // Get all attachments, excluding inline attachments
+            'attachments' => $parser->getAttachments(),
+            'message' => [
+                'html' => $parser->getMessageBody('html'),
+                'text' => $parser->getMessageBody('text')
+            ],
+        ];
     }
 }

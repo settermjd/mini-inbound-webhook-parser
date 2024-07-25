@@ -2,6 +2,7 @@
 
 namespace App;
 
+use eXorus\PhpMimeMailParser\Attachment;
 use JustSteveKing\StatusCode\Http;
 use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\TestCase;
@@ -81,5 +82,45 @@ class ProcessEmailHandlerTest extends TestCase
         $this->assertInstanceOf(MessageInterface::class, $output);
         $this->assertSame(Http::OK->value, $output->getStatusCode());
         $this->assertSame(json_encode($expectedOutput), $output->getBody()->getContents());
+    }
+
+    public function testCanParseEmailFromEmailString(): void
+    {
+        $emailContents = file_get_contents(sprintf(
+            "%s/data/email/sendgrid-example.eml",
+            __DIR__
+        ));
+        $handler = new ProcessEmailHandler();
+        $emailData = $handler->parseEmail($emailContents);
+
+        $htmlBody = <<<EOF
+<div dir="ltr">This is a test email with 1 attachment.<br clear="all"><div> </div>--  <div class="gmail_signature" data-smartmail="gmail_signature"><div dir="ltr"><img src="https://sendgrid.com/brand/sg-logo-email.png" width="96" height="17"> <div> </div></div></div></div>
+
+EOF;
+
+        $textBody = <<<EOF
+This is a test email with 1 attachment.
+
+EOF;
+
+        $this->assertIsArray($emailData);
+        $this->assertSame("example@example.com", $emailData['sender']);
+        $this->assertSame(
+            [
+                'html' => $htmlBody,
+                'text' => $textBody,
+            ],
+            $emailData['message']
+        );
+        $this->assertCount(1, $emailData['attachments']);
+        $this->assertInstanceOf(Attachment::class, $emailData['attachments'][0]);
+
+        /** @var Attachment $attachment */
+        $attachment = $emailData['attachments'][0];
+        $this->assertSame("DockMcWordface.docx", $attachment->getFilename());
+        $this->assertSame(
+            "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+            $attachment->getContentType()
+        );
     }
 }
