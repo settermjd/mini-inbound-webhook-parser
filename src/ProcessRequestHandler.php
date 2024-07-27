@@ -15,6 +15,8 @@ class ProcessRequestHandler
 
     public const string VALID_SUBJECT_REGEX = "/(?i:Ref(erence)? ID: )(?<refid>[0-9a-zA-Z]{14})/";
 
+    public const string VALID_EMAIL_REGEX = "/(?<name>[a-zA-Z\ ]*(?= <)) <(?<address>[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,})>/i";
+
     public function isValidSubjectLine(string $subjectLine): bool
     {
         if ($subjectLine === '') {
@@ -76,6 +78,15 @@ class ProcessRequestHandler
                 'html' => $parser->getMessageBody('html'),
                 'text' => $parser->getMessageBody('text')
             ],
+        ];
+    }
+
+    private function parseEmailAddress(string $emailSender): array
+    {
+        preg_match(self::VALID_EMAIL_REGEX, $emailSender, $matches);
+        return [
+            'name' => $matches['name'],
+            'address' => $matches['address'],
         ];
     }
 }
