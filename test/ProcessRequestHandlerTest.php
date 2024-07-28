@@ -104,7 +104,10 @@ This is a test email with 1 attachment.
 EOF;
 
         $this->assertIsArray($emailData);
-        $this->assertSame("example@example.com", $emailData['sender']);
+        $this->assertSame(
+            'Sender Name <example@example.org>',
+            $emailData['sender']
+        );
         $this->assertSame(
             [
                 'html' => $htmlBody,

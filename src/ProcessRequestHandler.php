@@ -71,7 +71,7 @@ class ProcessRequestHandler
         $parser->setText($email);
 
         return [
-            'sender' => $parser->getHeader('to'),
+            'sender' => $parser->getHeader('from'),
             // Get all attachments, excluding inline attachments
             'attachments' => $parser->getAttachments(false),
             'message' => [
