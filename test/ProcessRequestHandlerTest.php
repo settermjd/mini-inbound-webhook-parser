@@ -85,7 +85,7 @@ class ProcessRequestHandlerTest extends TestCase
         $expectedOutput = [
             'status' => 'success',
             'data' => [
-                'reference id' => $handler->getReferenceId($subjectLine),
+                'reference id' => $requestHandler->getReferenceId($subjectLine),
             ]
         ];
 
