@@ -4,8 +4,13 @@ BEGIN TRANSACTION;
 -- Create the database tables
 CREATE TABLE IF NOT EXISTS attachment (
     id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-    note_id INTEGER DEFAULT NULL,
-    file BLOB DEFAULT NULL,
+    note_id INTEGER NOT NULL,
+    -- Stores the contents of the file, binary or plain text
+    file BLOB NOT NULL,
+    -- Stores the file's name, retrieved from the email
+    filename TEXT NOT NULL,
+    -- Stores the file's content type value, retrieved from the email
+    filetype TEXT NOT NULL,
     CONSTRAINT fk_attachment_note
         FOREIGN KEY (note_id)
             REFERENCES note (id)
@@ -38,6 +43,6 @@ CREATE UNIQUE INDEX IF NOT EXISTS uniq_user_email ON user (email);
 CREATE UNIQUE INDEX IF NOT EXISTS uniq_user_phone ON user (phone_number);
 
 -- Add some initial users to the database
-INSERT INTO user(name, email, phone_number) VALUES('Billy Joel', 'b.joel@example.org', '+11234567890');
+INSERT INTO user(name, email, phone_number) VALUES('Billy Joel', 'example@example.org', '+11234567890');
 
 COMMIT;

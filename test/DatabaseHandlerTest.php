@@ -38,15 +38,14 @@ class DatabaseHandlerTest extends TestCase
         $attachment = file_get_contents(
             __DIR__ . "/data/attachment/generic-document.pdf"
         );
-        $this->assertSame(1, $this->handler->insertAttachment(1, $attachment));
-    }
-
-    public function tearDown(): void
-    {
-        // Remove the database
-        $command = new Command(sprintf('unlink %s/data/database/database.sqlite', __DIR__));
-        echo ($command->execute())
-            ? $command->getOutput()
-            : $command->getError();
+        $this->assertSame(
+            1,
+            $this->handler->insertAttachment(
+                1,
+                $attachment,
+                'DockMcWordface.docx',
+                'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+            )
+        );
     }
 }

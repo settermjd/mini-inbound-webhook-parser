@@ -29,14 +29,24 @@ readonly class DatabaseHandler
             ->getLastGeneratedValue();
     }
 
-    public function insertAttachment(int $noteID, $attachment): int
+    public function insertAttachment(
+        int $noteID,
+        $attachment,
+        string $filename,
+        string $filetype
+    ): int
     {
         $sql = new Sql($this->adapter);
         $insert = $sql->insert();
         $insert
             ->into('attachment')
-            ->columns(['file'])
-            ->values([$attachment]);
+            ->columns(['note_id', 'file', 'filename', 'filetype'])
+            ->values([
+                $noteID,
+                $attachment,
+                $filename,
+                $filetype,
+            ]);
         $statement = $sql->prepareStatementForSqlObject($insert);
         $statement->execute();
 
