@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace AppTest;
 
+use App\DatabaseHandler;
 use App\ProcessRequestHandler;
 use eXorus\PhpMimeMailParser\Attachment;
 use JustSteveKing\StatusCode\Http;
@@ -15,6 +16,8 @@ use Slim\Psr7\Response;
 
 class ProcessRequestHandlerTest extends TestCase
 {
+    use DatabaseBackedTestTrait;
+
     /**
      * @return void
      * @throws Exception
@@ -27,7 +30,8 @@ class ProcessRequestHandlerTest extends TestCase
     #[TestWith(['Reference ID: AU2407240001'])]
     public function testCanDetectInvalidSubjectLines(string $subjectLine)
     {
-        $handler = new ProcessRequestHandler();
+        $databaseHandler = $this->createMock(DatabaseHandler::class);
+        $handler = new ProcessRequestHandler($databaseHandler);
 
         $request = $this->createMock(ServerRequestInterface::class);
         $request
@@ -57,19 +61,19 @@ class ProcessRequestHandlerTest extends TestCase
     #[TestWith(['Reference ID: MSAU2407240001'])]
     public function testCanProcessEmailsWithValidSubjectLines(string $subjectLine)
     {
-        $handler = new ProcessRequestHandler();
+        $requestHandler = new ProcessRequestHandler($this->handler);
 
         $request = $this->createMock(ServerRequestInterface::class);
         $request
             ->expects($this->once())
             ->method('getParsedBody')
             ->willReturn([
-                'subject' => $subjectLine
+                'subject' => $subjectLine,
             ]);
 
         $response = new Response();
 
-        $output = $handler($request, $response, []);
+        $output = $requestHandler($request, $response, []);
         $output->getBody()->rewind();
 
         $expectedOutput = [
@@ -90,7 +94,8 @@ class ProcessRequestHandlerTest extends TestCase
             "%s/data/email/sendgrid-example.eml",
             __DIR__
         ));
-        $handler = new ProcessRequestHandler();
+        $databaseHandler = $this->createMock(DatabaseHandler::class);
+        $handler = new ProcessRequestHandler($databaseHandler);
         $emailData = $handler->parseEmail($emailContents);
 
         $htmlBody = <<<EOF

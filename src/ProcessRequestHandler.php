@@ -17,6 +17,10 @@ class ProcessRequestHandler
 
     public const string VALID_EMAIL_REGEX = "/(?<name>[a-zA-Z\ ]*(?= <)) <(?<address>[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,})>/i";
 
+    public function __construct(
+        private readonly DatabaseHandler $databaseHandler,
+    ){}
+
     public function isValidSubjectLine(string $subjectLine): bool
     {
         if ($subjectLine === '') {
