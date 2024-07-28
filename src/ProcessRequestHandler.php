@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App;
 
+use eXorus\PhpMimeMailParser\Attachment;
 use eXorus\PhpMimeMailParser\Parser;
 use JustSteveKing\StatusCode\Http;
 use Psr\Http\Message\ResponseInterface;
@@ -41,7 +42,8 @@ class ProcessRequestHandler
         ServerRequestInterface $request,
         ResponseInterface $response,
         array $args
-    ) {
+    ): ResponseInterface
+    {
         $parsedBody = $request->getParsedBody();
         $subject = $parsedBody['subject'] ?? '';
 
@@ -56,6 +58,26 @@ class ProcessRequestHandler
             $response->getBody()->write(json_encode($responseData));
             
             return $response->withStatus(Http::BAD_REQUEST->value);
+        }
+
+        $emailContent = (string)$parsedBody['email'] ?? '';
+        $emailData = $this->parseEmail($emailContent);
+        $sender = $this->parseEmailAddress($emailData['sender']);
+        $userID = $this->databaseHandler->findUserIDByEmailAddress($sender['address']);
+
+        $noteID = $this->databaseHandler->insertNote($userID, $emailData['message']['text']);
+        if (count($emailData['attachments'])) {
+            $attachments = $emailData['attachments'];
+            /** @var Attachment $attachment */
+            foreach ($attachments as $attachment) {
+                $this->databaseHandler
+                    ->insertAttachment(
+                        $noteID,
+                        $attachment->getContent(),
+                        $attachment->getFilename(),
+                        $attachment->getContentType()
+                    );
+            }
         }
 
         $responseData = [
