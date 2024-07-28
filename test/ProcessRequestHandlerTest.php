@@ -63,12 +63,18 @@ class ProcessRequestHandlerTest extends TestCase
     {
         $requestHandler = new ProcessRequestHandler($this->handler);
 
+        $emailContents = file_get_contents(sprintf(
+            "%s/data/email/sendgrid-example.eml",
+            __DIR__
+        ));
+
         $request = $this->createMock(ServerRequestInterface::class);
         $request
             ->expects($this->once())
             ->method('getParsedBody')
             ->willReturn([
                 'subject' => $subjectLine,
+                'email' => $emailContents,
             ]);
 
         $response = new Response();
