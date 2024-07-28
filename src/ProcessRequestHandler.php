@@ -6,7 +6,9 @@ namespace App;
 
 use eXorus\PhpMimeMailParser\Attachment;
 use eXorus\PhpMimeMailParser\Parser;
+use Flynsarmy\SlimMonolog\Log\MonologWriter;
 use JustSteveKing\StatusCode\Http;
+use Monolog\Logger;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -20,6 +22,7 @@ class ProcessRequestHandler
 
     public function __construct(
         private readonly DatabaseHandler $databaseHandler,
+        private readonly ?MonologWriter $logger = null
     ){}
 
     public function isValidSubjectLine(string $subjectLine): bool
@@ -64,6 +67,8 @@ class ProcessRequestHandler
         $emailData = $this->parseEmail($emailContent);
         $sender = $this->parseEmailAddress($emailData['sender']);
         $userID = $this->databaseHandler->findUserIDByEmailAddress($sender['address']);
+
+        $this->logger?->write($sender['address'], Logger::WARNING);
 
         $noteID = $this->databaseHandler->insertNote($userID, $emailData['message']['text']);
         if (count($emailData['attachments'])) {

@@ -5,6 +5,7 @@ declare(strict_types=1);
 use App\DatabaseHandler;
 use App\ProcessRequestHandler;
 use DI\Container;
+use Flynsarmy\SlimMonolog\Log\MonologWriter;
 use Laminas\Db\Adapter\Adapter;
 use \Monolog\Handler\StreamHandler;
 use Slim\Factory\AppFactory;
