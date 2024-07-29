@@ -24,6 +24,7 @@ trait DatabaseBackedTestTrait
     private const string DATABASE_PATH = "test/data/database/database.sqlite";
 
     private DatabaseHandler $handler;
+
     private AdapterInterface $adapter;
 
     public function setUp(): void
