@@ -14,7 +14,7 @@ class DatabaseHandlerTest extends TestCase
 
     public function testCanCreateNewNote()
     {
-        $this->assertSame(1,
+        $this->assertSame(2,
             $this->handler->insertNote(1, "Here is my note")
         );
     }
@@ -51,5 +51,20 @@ class DatabaseHandlerTest extends TestCase
                 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
             )
         );
+    }
+
+    public function testCanRetrieveNoteByID(): void
+    {
+        $noteDetails = [
+            'id' => 1,
+            'user_id' => 1,
+            'details' => 'Here are the details of the note',
+        ];
+        $this->assertSame($noteDetails, $this->handler->getNoteByID(1));
+    }
+
+    public function testCannotRetrieveNoteWithIDThatDoesNotExist(): void
+    {
+        $this->assertNull($this->handler->getNoteByID(11));
     }
 }

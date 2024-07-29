@@ -75,4 +75,32 @@ readonly class DatabaseHandler
 
         return null;
     }
+
+    /**
+     * getNoteByID retrieves details of a note based on its id ($noteID)
+     * If a note is not found, based on the supplied id, then null is returned.
+     * If a note is found, then the note's details are returned in an array.
+     *
+     * @return null|array<string,string>
+     */
+    public function getNoteByID(int $noteID): ?array
+    {
+        $sql = new Sql($this->adapter);
+        $select = $sql->select();
+        $select
+            ->from('note')
+            ->where(['id' => $noteID]);
+
+        $statement = $sql->prepareStatementForSqlObject($select);
+        /** @var ResultInterface|Result $result */
+        $result = $statement->execute();
+
+        if ($result instanceof ResultInterface && $result->isQueryResult()) {
+            $record = $result->current();
+            return is_array($record) ? $record : null;
+        }
+
+        return null;
+    }
+
 }

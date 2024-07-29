@@ -20,7 +20,7 @@ CREATE TABLE IF NOT EXISTS attachment (
 CREATE TABLE IF NOT EXISTS note (
     id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
     user_id INTEGER DEFAULT NULL,
-    details CLOB DEFAULT NULL,
+    details BLOB DEFAULT NULL,
     CONSTRAINT fk_note_user
         FOREIGN KEY (user_id)
             REFERENCES user (id)
@@ -44,5 +44,6 @@ CREATE UNIQUE INDEX IF NOT EXISTS uniq_user_phone ON user (phone_number);
 
 -- Add some initial users to the database
 INSERT INTO user(name, email, phone_number) VALUES('Billy Joel', 'example@example.org', '+11234567890');
+INSERT INTO note(user_id, details) VALUES (1, 'Here are the details of the note');
 
 COMMIT;
