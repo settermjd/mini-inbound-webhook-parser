@@ -70,7 +70,7 @@ readonly class DatabaseHandler
 
         if ($result instanceof ResultInterface && $result->isQueryResult()) {
             $record = $result->current();
-            return $record['id'];
+            return $record['id'] ?? null;
         }
 
         return null;

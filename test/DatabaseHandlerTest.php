@@ -29,7 +29,11 @@ class DatabaseHandlerTest extends TestCase
 
     public function testCannotFindUserIDFromEmailAddressWhenNoEmailAddressIsExists()
     {
-        $this->assertNull($this->handler->findUserIDByEmailAddress('unknown.user@example.org'));
+        $this->assertNull(
+            $this->handler->findUserIDByEmailAddress(
+                'unknown.user@example.org'
+            )
+        );
     }
 
     #[Depends('testCanCreateNewNote')]
