@@ -55,13 +55,16 @@ readonly class DatabaseHandler
             ->getLastGeneratedValue();
     }
 
-    public function findUserIDByEmailAddress(string $emailAddress): ?int
+    /**
+     * @param string $emailAddress
+     * @return array<string,string|int>|null
+     */
+    public function findUserByEmailAddress(string $emailAddress): ?array
     {
         $sql = new Sql($this->adapter);
         $select = $sql->select();
         $select
             ->from('user')
-            ->columns(['id'])
             ->where(['email' => $emailAddress]);
 
         $statement = $sql->prepareStatementForSqlObject($select);
@@ -70,7 +73,7 @@ readonly class DatabaseHandler
 
         if ($result instanceof ResultInterface && $result->isQueryResult()) {
             $record = $result->current();
-            return $record['id'] ?? null;
+            return (is_array($record)) ? $record : null;
         }
 
         return null;

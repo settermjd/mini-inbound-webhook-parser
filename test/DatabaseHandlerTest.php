@@ -19,18 +19,23 @@ class DatabaseHandlerTest extends TestCase
         );
     }
 
-    public function testCanFindUserIDFromEmailAddress()
+    public function testCanFindUserFromEmailAddress()
     {
         $this->assertSame(
-            1,
-            $this->handler->findUserIDByEmailAddress('example@example.org')
+            [
+                'id' => 1,
+                'name' => 'Billy Joel',
+                'email' => 'example@example.org',
+                'phone_number' => '+11234567890',
+            ],
+            $this->handler->findUserByEmailAddress('example@example.org')
         );
     }
 
-    public function testCannotFindUserIDFromEmailAddressWhenNoEmailAddressIsExists()
+    public function testCannotFindUserFromEmailAddressWhenNoEmailAddressIsExists()
     {
         $this->assertNull(
-            $this->handler->findUserIDByEmailAddress(
+            $this->handler->findUserByEmailAddress(
                 'unknown.user@example.org'
             )
         );
