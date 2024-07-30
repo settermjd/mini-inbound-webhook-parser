@@ -3,13 +3,16 @@
 declare(strict_types=1);
 
 use App\DatabaseHandler;
+use App\GetNoteMessageBodyHandler;
 use App\ProcessRequestHandler;
 use App\TwilioHandler;
 use DI\Container;
-use Flynsarmy\SlimMonolog\Log\MonologWriter;
 use Laminas\Db\Adapter\Adapter;
-use \Monolog\Handler\StreamHandler;
 use mikehaertl\shellcommand\Command;
+use Monolog\Handler\StreamHandler;
+use Monolog\Level;
+use Monolog\Logger;
+use Psr\Log\LoggerInterface;
 use Slim\Factory\AppFactory;
 use Twilio\Rest\Client;
 
@@ -24,6 +27,8 @@ $dotenv->required([
 ])->notEmpty();
 
 const DATABASE_PATH = __DIR__ . "/../database";
+
+const LOG_PATH = __DIR__ . "/../logs";
 
 $container = new Container();
 AppFactory::setContainer($container);
@@ -73,14 +78,17 @@ $container->set(
 );
 
 $container->set(
-    \Psr\Log\LoggerInterface::class,
-    function (): MonologWriter {
-        return new MonologWriter(array(
-            'handlers' => array(
-                new StreamHandler('./logs/'.date('Y-m-d').'.log'),
-            ),
-        ));
+    GetNoteMessageBodyHandler::class,
+    function (Container $container): GetNoteMessageBodyHandler {
+        return new GetNoteMessageBodyHandler($container->get(DatabaseHandler::class));
     }
+);
+
+$container->set(
+    LoggerInterface::class,
+    fn (): LoggerInterface => (new Logger('name'))->pushHandler(
+        new StreamHandler(sprintf('%s/app.log', LOG_PATH), Level::Debug)
+    )
 );
 
 $app = AppFactory::create();
