@@ -65,7 +65,7 @@ class ProcessRequestHandlerTest extends TestCase
 
     #[TestWith(['Ref ID: MSAU2407240001'])]
     #[TestWith(['Reference ID: MSAU2407240001'])]
-    public function testCanProcessEmailsWithValidSubjectLines(string $subjectLine)
+    public function testCanProcessValidRequests(string $subjectLine)
     {
         $this->seeInDatabase('user', ['email' => 'example@example.org']);
 
