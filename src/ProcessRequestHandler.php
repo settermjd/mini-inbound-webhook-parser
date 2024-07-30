@@ -68,14 +68,13 @@ class ProcessRequestHandler
         $user = $this->databaseHandler->findUserByEmailAddress($sender['address']);
         $noteID = $this->addNote($user['id'], $emailData);
 
-        $this->logger?->write($sender['address'], Logger::WARNING);
         $this->twilioHandler
             ->sendNewNoteNotification(
-                        $noteID,
+                $noteID,
                 $user['phone_number'],
                 $user['name'],
                 $emailData['attachments']
-                    );
+            );
 
         $responseData = [
             "status" => "success",
