@@ -93,6 +93,7 @@ $container->set(
 
 $app = AppFactory::create();
 
-$app->get('/', $container->get(ProcessRequestHandler::class));
+$app->post('/', $container->get(ProcessRequestHandler::class));
+$app->get('/note/{note:\d+}', $container->get(GetNoteMessageBodyHandler::class));
 
 $app->run();
