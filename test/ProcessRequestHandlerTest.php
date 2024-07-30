@@ -5,7 +5,9 @@ namespace AppTest;
 
 use App\DatabaseHandler;
 use App\ProcessRequestHandler;
+use App\TwilioHandler;
 use eXorus\PhpMimeMailParser\Attachment;
+use eXorus\PhpMimeMailParser\Parser;
 use JustSteveKing\StatusCode\Http;
 use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\MockObject\Exception;
@@ -31,7 +33,11 @@ class ProcessRequestHandlerTest extends TestCase
     public function testCanDetectInvalidSubjectLines(string $subjectLine)
     {
         $databaseHandler = $this->createMock(DatabaseHandler::class);
-        $handler = new ProcessRequestHandler($databaseHandler);
+        $handler = new ProcessRequestHandler(
+            $databaseHandler,
+            $this->createMock(TwilioHandler::class),
+            null,
+        );
 
         $request = $this->createMock(ServerRequestInterface::class);
         $request
@@ -63,12 +69,31 @@ class ProcessRequestHandlerTest extends TestCase
     {
         $this->seeInDatabase('user', ['email' => 'example@example.org']);
 
-        $requestHandler = new ProcessRequestHandler($this->handler);
-
         $emailContents = file_get_contents(sprintf(
             "%s/data/email/sendgrid-example.eml",
             __DIR__
         ));
+
+        $parser = new Parser();
+        $parser->setText($emailContents);
+
+        $twilioHandler = $this->createMock(TwilioHandler::class);
+        $twilioHandler
+            ->expects($this->once())
+            ->method('sendNewNoteNotification')
+            ->with(
+                2,
+                '+11234567890',
+                'Billy Joel',
+                $this->isType('array'),
+            )
+            ->willReturn(true);
+
+        $requestHandler = new ProcessRequestHandler(
+            $this->handler,
+            $twilioHandler,
+            null,
+        );
 
         $request = $this->createMock(ServerRequestInterface::class);
         $request
@@ -103,7 +128,11 @@ class ProcessRequestHandlerTest extends TestCase
             __DIR__
         ));
         $databaseHandler = $this->createMock(DatabaseHandler::class);
-        $handler = new ProcessRequestHandler($databaseHandler);
+        $handler = new ProcessRequestHandler(
+            $databaseHandler,
+            $this->createMock(TwilioHandler::class),
+            null,
+        );
         $emailData = $handler->parseEmail($emailContents);
 
         $htmlBody = <<<EOF

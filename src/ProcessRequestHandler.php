@@ -63,27 +63,19 @@ class ProcessRequestHandler
             return $response->withStatus(Http::BAD_REQUEST->value);
         }
 
-        $emailContent = (string)$parsedBody['email'] ?? '';
-        $emailData = $this->parseEmail($emailContent);
+        $emailData = $this->parseEmail((string)$parsedBody['email'] ?? '');
         $sender = $this->parseEmailAddress($emailData['sender']);
-        $userID = $this->databaseHandler->findUserIDByEmailAddress($sender['address']);
+        $user = $this->databaseHandler->findUserByEmailAddress($sender['address']);
+        $noteID = $this->addNote($user['id'], $emailData);
 
         $this->logger?->write($sender['address'], Logger::WARNING);
-
-        $noteID = $this->databaseHandler->insertNote($userID, $emailData['message']['text']);
-        if (count($emailData['attachments'])) {
-            $attachments = $emailData['attachments'];
-            /** @var Attachment $attachment */
-            foreach ($attachments as $attachment) {
-                $this->databaseHandler
-                    ->insertAttachment(
+        $this->twilioHandler
+            ->sendNewNoteNotification(
                         $noteID,
-                        $attachment->getContent(),
-                        $attachment->getFilename(),
-                        $attachment->getContentType()
+                $user['phone_number'],
+                $user['name'],
+                $emailData['attachments']
                     );
-            }
-        }
 
         $responseData = [
             "status" => "success",
@@ -119,5 +111,27 @@ class ProcessRequestHandler
             'name' => $matches['name'],
             'address' => $matches['address'],
         ];
+    }
+
+    /**
+     * addNote adds a new note on the user's account.
+     */
+    public function addNote($userID, array $emailData): int
+    {
+        $noteID = $this->databaseHandler->insertNote((int)$userID, $emailData['message']['text']);
+        if (count($emailData['attachments'])) {
+            $attachments = $emailData['attachments'];
+            /** @var Attachment $attachment */
+            foreach ($attachments as $attachment) {
+                $this->databaseHandler
+                    ->insertAttachment(
+                        $noteID,
+                        $attachment->getContent(),
+                        $attachment->getFilename(),
+                        $attachment->getContentType()
+                    );
+            }
+        }
+        return $noteID;
     }
 }
