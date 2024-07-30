@@ -5,6 +5,9 @@ declare(strict_types=1);
 namespace App;
 
 use JustSteveKing\StatusCode\Http;
+use PhpOffice\PhpWord\IOFactory;
+use PhpOffice\PhpWord\PhpWord;
+use PhpOffice\PhpWord\Settings;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -33,12 +36,26 @@ readonly class GetNoteMessageBodyHandler
                 ->withHeader('content-type', 'application/json; charset=utf-8');
         }
 
+        Settings::setPdfRendererOptions([
+            'font' => 'Arial'
+        ]);
+        Settings::setPdfRendererName(Settings::PDF_RENDERER_MPDF);
+        Settings::setPdfRendererPath(__DIR__ . '/../vendor/mpdf/mpdf');
+
+        $phpWord = new PhpWord();
+        $section = $phpWord->addSection();
+        $section->addText($note['details']);
+
+        $filename = __DIR__ . '/../tmp/note.pdf';
+        $objWriter = IOFactory::createWriter($phpWord, 'PDF');
+        $objWriter->save($filename);
+
         $response
             ->getBody()
-            ->write($note['details']);
+            ->write(file_get_contents($filename));
 
         return $response
-            ->withHeader('content-disposition', 'attachment; filename=note.txt;')
-            ->withHeader('content-type', 'text/plain; charset=utf-8');
+            ->withHeader('content-disposition', 'attachment; filename=note.pdf;')
+            ->withHeader('content-type', 'application/pdf');
     }
 }

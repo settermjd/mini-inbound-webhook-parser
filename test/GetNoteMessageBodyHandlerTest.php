@@ -33,11 +33,11 @@ class GetNoteMessageBodyHandlerTest extends TestCase
 
         $this->assertInstanceOf(ResponseInterface::class, $response);
         $this->assertSame(
-            'attachment; filename=note.txt;',
+            'attachment; filename=note.pdf;',
             $response->getHeaderLine('content-disposition')
         );
         $this->assertSame(
-            'text/plain; charset=utf-8',
+            'application/pdf',
             $response->getHeaderLine('content-type')
         );
     }
