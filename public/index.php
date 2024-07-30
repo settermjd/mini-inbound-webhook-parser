@@ -9,12 +9,12 @@ use DI\Container;
 use Flynsarmy\SlimMonolog\Log\MonologWriter;
 use Laminas\Db\Adapter\Adapter;
 use \Monolog\Handler\StreamHandler;
+use mikehaertl\shellcommand\Command;
 use Slim\Factory\AppFactory;
 use Twilio\Rest\Client;
 
 require __DIR__ . '/../vendor/autoload.php';
 
-const DATABASE_PATH = "data/database.sqlite";
 $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . "/../");
 $dotenv->load();
 $dotenv->required([
@@ -23,15 +23,31 @@ $dotenv->required([
     'TWILIO_PHONE_NUMBER',
 ])->notEmpty();
 
+const DATABASE_PATH = __DIR__ . "/../database";
+
 $container = new Container();
 AppFactory::setContainer($container);
 
-$container->set(DatabaseHandler::class, function (): DatabaseHandler {
-    return new DatabaseHandler(new Adapter([
+// Set up the database
+$databaseFile = sprintf("%s/database.sqlite", DATABASE_PATH);
+if (! file_exists($databaseFile)) {
+    $options = sprintf(
+        'sqlite3 -init %1$s/dump.sql %1$s/database.sqlite .quit',
+        DATABASE_PATH,
+    );
+    $command = new Command($options);
+    echo ($command->execute())
+        ? $command->getOutput()
+        : $command->getError();
+}
+
+$container->set(
+    DatabaseHandler::class,
+    fn () => new DatabaseHandler(new Adapter([
         'driver'   => 'Pdo_Sqlite',
-        'database' => DATABASE_PATH,
-    ]));
-});
+        'database' => $databaseFile,
+    ]))
+);
 
 $container->set(
     TwilioHandler::class,
