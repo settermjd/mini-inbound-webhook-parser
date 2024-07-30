@@ -29,7 +29,8 @@ readonly class GetNoteMessageBodyHandler
                     "detail" => "No note with note ID {$noteID} was found.",
                 ]));
 
-            return $response;
+            return $response
+                ->withHeader('content-type', 'application/json; charset=utf-8');
         }
 
         $response
