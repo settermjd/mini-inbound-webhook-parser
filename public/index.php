@@ -50,7 +50,8 @@ $container->set(
     function (Container $container): ProcessRequestHandler {
         return new ProcessRequestHandler(
             $container->get(DatabaseHandler::class),
-            $container->get(\Psr\Log\LoggerInterface::class),
+            $container->get(TwilioHandler::class),
+            $container->get(LoggerInterface::class),
         );
     }
 );

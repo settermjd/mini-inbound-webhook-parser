@@ -6,11 +6,10 @@ namespace App;
 
 use eXorus\PhpMimeMailParser\Attachment;
 use eXorus\PhpMimeMailParser\Parser;
-use Flynsarmy\SlimMonolog\Log\MonologWriter;
 use JustSteveKing\StatusCode\Http;
-use Monolog\Logger;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Log\LoggerInterface;
 
 class ProcessRequestHandler
 {
@@ -22,7 +21,8 @@ class ProcessRequestHandler
 
     public function __construct(
         private readonly DatabaseHandler $databaseHandler,
-        private readonly ?MonologWriter $logger = null
+        private readonly TwilioHandler $twilioHandler,
+        private readonly ?LoggerInterface $logger = null
     ){}
 
     public function isValidSubjectLine(string $subjectLine): bool
