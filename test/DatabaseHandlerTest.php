@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace AppTest;
 
+use eXorus\PhpMimeMailParser\Attachment;
 use PHPUnit\Framework\Attributes\Depends;
 use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\TestCase;
@@ -55,17 +56,23 @@ class DatabaseHandlerTest extends TestCase
     #[Depends('testCanCreateNewNote')]
     public function testCanCreateNewAttachment()
     {
-        $attachment = file_get_contents(
-            __DIR__ . "/data/attachment/generic-document.pdf"
-        );
+        $attachment = $this->createMock(Attachment::class);
+        $attachment
+            ->expects($this->once())
+            ->method('getContent')
+            ->willReturn('Here is a test file');
+        $attachment
+            ->expects($this->once())
+            ->method('getFilename')
+            ->willReturn('DockMcWordface.docx');
+        $attachment
+            ->expects($this->once())
+            ->method('getContentType')
+            ->willReturn('application/vnd.openxmlformats-officedocument.wordprocessingml.document');
+
         $this->assertSame(
             1,
-            $this->handler->insertAttachment(
-                1,
-                $attachment,
-                'DockMcWordface.docx',
-                'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
-            )
+            $this->handler->insertAttachment(1, $attachment)
         );
     }
 

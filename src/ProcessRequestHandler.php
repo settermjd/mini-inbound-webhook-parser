@@ -125,12 +125,7 @@ class ProcessRequestHandler
             /** @var Attachment $attachment */
             foreach ($attachments as $attachment) {
                 $this->databaseHandler
-                    ->insertAttachment(
-                        $noteID,
-                        $attachment->getContent(),
-                        $attachment->getFilename(),
-                        $attachment->getContentType()
-                    );
+                    ->insertAttachment($noteID, $attachment);
             }
         }
         return $noteID;

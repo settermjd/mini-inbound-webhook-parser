@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App;
 
+use eXorus\PhpMimeMailParser\Attachment;
 use Laminas\Db\Adapter\AdapterInterface;
 use Laminas\Db\Adapter\Driver\Pdo\Result;
 use Laminas\Db\Adapter\Driver\ResultInterface;
@@ -31,12 +32,7 @@ readonly class DatabaseHandler
             ->getLastGeneratedValue();
     }
 
-    public function insertAttachment(
-        int $noteID,
-        $attachment,
-        string $filename,
-        string $filetype
-    ): int
+    public function insertAttachment(int $noteID, Attachment $attachment): int
     {
         $sql = new Sql($this->adapter);
         $insert = $sql->insert();
@@ -45,9 +41,9 @@ readonly class DatabaseHandler
             ->columns(['note_id', 'file', 'filename', 'filetype'])
             ->values([
                 $noteID,
-                $attachment,
-                $filename,
-                $filetype,
+                $attachment->getContent(),
+                $attachment->getFilename(),
+                $attachment->getContentType(),
             ]);
         $statement = $sql->prepareStatementForSqlObject($insert);
         $statement->execute();
