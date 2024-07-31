@@ -6,6 +6,8 @@ namespace App;
 use Laminas\Db\Adapter\AdapterInterface;
 use Laminas\Db\Adapter\Driver\Pdo\Result;
 use Laminas\Db\Adapter\Driver\ResultInterface;
+use Laminas\Db\Sql\Expression;
+use Laminas\Db\Sql\Select;
 use Laminas\Db\Sql\Sql;
 use PDO;
 
@@ -104,6 +106,28 @@ readonly class DatabaseHandler
         }
 
         return null;
+    }
+
+    public function isValidReferenceID(string $reference): bool
+    {
+        $sql = new Sql($this->adapter);
+        $select = $sql->select();
+        $select
+            ->from(['u' => 'user'])
+            ->columns(['count' => new Expression("COUNT(*)")])
+            ->join(['r' => 'reference'], 'u.id = r.user_id', [], Select::JOIN_INNER)
+            ->where(['r.reference' => $reference])
+            ->limit(1);
+
+        $statement = $sql->prepareStatementForSqlObject($select);
+
+        /** @var ResultInterface|Result $result */
+        $result = $statement->execute();
+        if ($result instanceof ResultInterface && $result->isQueryResult()) {
+            return (bool)$result->current()['count'] ?? false;
+        }
+
+        return false;
     }
 
 }

@@ -34,10 +34,21 @@ CREATE TABLE IF NOT EXISTS user (
     phone_number VARCHAR(15) NOT NULL
 );
 
+CREATE TABLE IF NOT EXISTS reference (
+    id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+    reference VARCHAR(14) NOT NULL,
+    user_id INTEGER NOT NULL,
+    CONSTRAINT fk_reference_user
+        FOREIGN KEY (user_id)
+            REFERENCES user (id)
+            NOT DEFERRABLE INITIALLY IMMEDIATE
+);
+
 -- Add indexes on the database
 CREATE INDEX IF NOT EXISTS idx_attachment_note ON attachment (note_id);
 CREATE INDEX IF NOT EXISTS idx_note_user ON note (user_id);
 CREATE INDEX IF NOT EXISTS note_idx ON note (details);
+
 CREATE UNIQUE INDEX IF NOT EXISTS uniq_user_name ON user (name);
 CREATE UNIQUE INDEX IF NOT EXISTS uniq_user_email ON user (email);
 CREATE UNIQUE INDEX IF NOT EXISTS uniq_user_phone ON user (phone_number);
@@ -45,5 +56,6 @@ CREATE UNIQUE INDEX IF NOT EXISTS uniq_user_phone ON user (phone_number);
 -- Add some initial users to the database
 INSERT INTO user(name, email, phone_number) VALUES('Billy Joel', 'example@example.org', '+11234567890');
 INSERT INTO note(user_id, details) VALUES (1, 'Here are the details of the note');
+INSERT INTO reference(reference, user_id) VALUES ('MSAU2407240001', 1);
 
 COMMIT;

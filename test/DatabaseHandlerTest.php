@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace AppTest;
 
 use PHPUnit\Framework\Attributes\Depends;
+use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\TestCase;
 
 use function file_get_contents;
@@ -30,6 +31,16 @@ class DatabaseHandlerTest extends TestCase
             ],
             $this->handler->findUserByEmailAddress('example@example.org')
         );
+    }
+
+    #[TestWith(['MSAU2407240002', false])]
+    #[TestWith(['MSAU2407240001', true])]
+    public function testCanValidateReferenceIDs(string $referenceID, bool $isValid): void
+    {
+        $result = $this->handler->isValidReferenceID($referenceID);
+        ($isValid)
+            ? $this->assertTrue($result)
+            : $this->assertFalse($result);
     }
 
     public function testCannotFindUserFromEmailAddressWhenNoEmailAddressIsExists()
