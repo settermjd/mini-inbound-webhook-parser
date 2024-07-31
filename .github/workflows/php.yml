@@ -17,6 +17,12 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
+    - name: Setup PHP with the required extensions
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.3'
+        extensions: mailparse, mbstring, pdo, pcre
+
     - name: Validate composer.json and composer.lock
       run: composer validate --strict
 
