@@ -22,7 +22,7 @@ readonly class GetNoteMessageBodyHandler
         array $args
 ) : ResponseInterface
     {
-        $noteID = (int)$request->getAttribute('note');
+        $noteID = (int) $request->getAttribute('note');
         $note = $this->databaseHandler->getNoteByID($noteID);
         if (is_null($note)) {
             $response

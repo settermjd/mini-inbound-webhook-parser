@@ -25,6 +25,11 @@ class ProcessRequestHandler
         private readonly ?LoggerInterface $logger = null
     ){}
 
+    /**
+     * isValidSubjectLine validates the supplied subject line ($subjectLine) in
+     * two ways. First, it uses a regular expression. Second, it runs a check
+     * in the database. See DatabaseHandler::isValidReferenceID for more information.
+     */
     public function isValidSubjectLine(string $subjectLine): bool
     {
         if ($subjectLine === '') {
@@ -37,6 +42,11 @@ class ProcessRequestHandler
             && $this->databaseHandler->isValidReferenceID($matches['refid']));
     }
 
+    /**
+     * getReferenceID checks if the supplied subject line ($subjectLine) matches
+     * the required regular expression. If so, it retrieves and returns the matching
+     * reference id from the subject line.
+     */
     public function getReferenceId(string $subjectLine): string
     {
         preg_match(self::VALID_SUBJECT_REGEX, $subjectLine, $matches);
@@ -65,7 +75,7 @@ class ProcessRequestHandler
             return $response->withStatus(Http::BAD_REQUEST->value);
         }
 
-        $emailData = $this->parseEmail((string)$parsedBody['email'] ?? '');
+        $emailData = $this->parseEmail((string) $parsedBody['email'] ?? '');
         $sender = $this->parseEmailAddress($emailData['sender']);
         $user = $this->databaseHandler->findUserByEmailAddress($sender['address']);
         $noteID = $this->addNote($user['id'], $emailData);
@@ -89,6 +99,11 @@ class ProcessRequestHandler
         return $response;
     }
 
+    /**
+     * parseEmail converts the supplied textual representation of an email
+     * ($email) into a Parser object and then returns the email's sender,
+     * attachments, and html and text body.
+     */
     public function parseEmail(string $email): array
     {
         $parser = new Parser();
@@ -105,6 +120,11 @@ class ProcessRequestHandler
         ];
     }
 
+    /**
+     * parseEmailAddress checks if the email address string supplied
+     * ($emailSender) matches the validating regular expression. If so,
+     * it returns the name and email address from the string.
+     */
     private function parseEmailAddress(string $emailSender): array
     {
         preg_match(self::VALID_EMAIL_REGEX, $emailSender, $matches);
@@ -119,13 +139,12 @@ class ProcessRequestHandler
      */
     public function addNote($userID, array $emailData): int
     {
-        $noteID = $this->databaseHandler->insertNote((int)$userID, $emailData['message']['text']);
+        $noteID = $this->databaseHandler->insertNote((int) $userID, $emailData['message']['text']);
+        
         if (count($emailData['attachments'])) {
-            $attachments = $emailData['attachments'];
             /** @var Attachment $attachment */
-            foreach ($attachments as $attachment) {
-                $this->databaseHandler
-                    ->insertAttachment($noteID, $attachment);
+            foreach ($emailData['attachments'] as $attachment) {
+                $this->databaseHandler->insertAttachment($noteID, $attachment);
             }
         }
         return $noteID;

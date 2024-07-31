@@ -16,6 +16,10 @@ readonly class DatabaseHandler
 {
     public function __construct(private AdapterInterface $adapter){}
 
+    /**
+     * insertNote creates a new note record with the note details supplied
+     * ($note) and links it to the user using the user's ID ($userID).
+     */
     public function insertNote(int $userID, string $note): int
     {
         $sql = new Sql($this->adapter);
@@ -32,6 +36,10 @@ readonly class DatabaseHandler
             ->getLastGeneratedValue();
     }
 
+    /**
+     * insertAttachment creates a new attachment record with the attachment details
+     * supplied (Attachment) and links it to the note using the note's ID ($noteID).
+     */
     public function insertAttachment(int $noteID, Attachment $attachment): int
     {
         $sql = new Sql($this->adapter);
@@ -54,7 +62,10 @@ readonly class DatabaseHandler
     }
 
     /**
-     * @param string $emailAddress
+     * findUserByEmailAddress attempts to retrieve a user's details based on
+     * the email address supplied ($emailAddress). If a user cannot be found,
+     * with that email address then null is returned.
+     *
      * @return array<string,string|int>|null
      */
     public function findUserByEmailAddress(string $emailAddress): ?array
@@ -104,6 +115,10 @@ readonly class DatabaseHandler
         return null;
     }
 
+    /**
+     * isValidReferenceID checks if the supplied reference ID supplied($reference)
+     * both exists and is linked to a given user.
+     */
     public function isValidReferenceID(string $reference): bool
     {
         $sql = new Sql($this->adapter);
@@ -120,7 +135,7 @@ readonly class DatabaseHandler
         /** @var ResultInterface|Result $result */
         $result = $statement->execute();
         if ($result instanceof ResultInterface && $result->isQueryResult()) {
-            return (bool)$result->current()['count'] ?? false;
+            return (bool) $result->current()['count'] ?? false;
         }
 
         return false;
