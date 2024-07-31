@@ -1,5 +1,7 @@
 # Example PHP Web App That Interacts With SendGrid's Inbound Parse Webhook
 
+![Test workflow](https://github.com/settermjd/mini-inbound-webhook-parser/actions/workflows/php.yml/badge.svg)
+
 This is a small PHP web-based application that shows how to interact with SendGrid's [Inbound Parse Webhook](https://www.twilio.com/docs/sendgrid/for-developers/parsing-email/setting-up-the-inbound-parse-webhook).
 It creates a note on a fictitious user's account with details from an email send in a POST request to the application.
 
