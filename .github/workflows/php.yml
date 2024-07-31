@@ -21,7 +21,7 @@ jobs:
       uses: shivammathur/setup-php@v2
       with:
         php-version: '8.3'
-        extensions: mailparse, mbstring, pdo, pcre
+        extensions: mailparse, mbstring, pdo, pcre, ctype, filter, gd, json, libxml, pdo, phar, simplexml, tokenizer, xml, xmlwriter, zlib
 
     - name: Validate composer.json and composer.lock
       run: composer validate --strict
