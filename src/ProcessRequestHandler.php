@@ -31,8 +31,10 @@ class ProcessRequestHandler
             return false;
         }
 
-        $result = preg_match(self::VALID_SUBJECT_REGEX, $subjectLine);
-        return $result === self::IS_VALID_SUBJECT;
+        $result = preg_match(self::VALID_SUBJECT_REGEX, $subjectLine, $matches);
+        return (
+            $result === self::IS_VALID_SUBJECT
+            && $this->databaseHandler->isValidReferenceID($matches['refid']));
     }
 
     public function getReferenceId(string $subjectLine): string
@@ -55,7 +57,7 @@ class ProcessRequestHandler
         if (! $this->isValidSubjectLine($subject)) {
             $responseData = [
                 "status" => "error",
-                "message" => "The email subject does not contain a valid reference ID.",
+                "message" => "The email subject either does not contain a valid reference ID or the reference ID supplied is not valid for an existing user.",
                 "detail" => "Email subject lines must match one of the following two, case-insensitive, formats: 'Reference ID: REF_ID' or 'Ref ID: REF_ID'. REF_ID is a 14 character string. It can contain lower and uppercase letters from A to Z (inclusive), and any digit between 0 and 9 (inclusive).",
             ];
             $response->getBody()->write(json_encode($responseData));
